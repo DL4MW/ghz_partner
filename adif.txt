@@ -1,0 +1,44 @@
+ADDRESS Address  Address as it will appear on the mailing label
+AGE  Age Age of the operator
+ARRL_SECT   ArrlSect  Arrl Section
+BAND Band  Apprevation for the used band, for instance 160M, 80M, 2M, 70CM, 23CM
+CALL   Call Call of the QSO Partner
+CNTY   US-County  US County in the format STATE,COUNTY. For example GA,BARROW. Use CQ County list
+COMMENT Comment Comment field for QSO
+CONT Continent Continent: NA,SA,EU,AF,OC,AS
+CONTEST_ID Contest  Short Contest Indentifier -- SS, ARRLVHF, ARRLDX, etc.
+CQZ CQ   CQ Zone
+DXCC  DXCC  Numeric DXCC identifiers from ARRL. See table below
+FREQ Freq Freq in Megahertz (with Decimalpoint)
+GRIDSQUARE QTH-Grid QTH Gridsquare 4, 6, or 8 or however many characters
+IOTA IOTA  IOTA id in the following format: example: NA-001
+ITUZ ITU ITU Zone (number)
+MODE mode Mode: SSB, CW, RTTY, TOR=AMTOR, PKT, AM, FM, SSTV, ATV, PAC=PACTOR,CLO=CLOVER
+NAME Name Name of the QSO partner
+NOTES Notes Long text for notes
+OPERATOR OP  Callsign of person logging the QSO
+PFX  WPX  WPX prefix
+PROP_MODE [PROP_MODE]
+QSLMSG [QSLMSG]  Personal message to appear on qsl card
+QSLRDATE QSL-Rcvd-Date   QSL Rcvd Date
+QSLSDATE QSL-Snd-Date QSL Sent Date
+QSL_RCVD QSL-Rcvd QSL received state:  Y=Yes, N=No, R=Requested, I=Ignore or Invalid
+QSL_SENT QSL-Send QSL send state: Y=Yes, N=No, R=Requested, I=Ignore or Invalid
+QSL_VIA  via QSL via Manager
+QSO_DATE Date QSO date in  YYYYMMDD in UTC
+QTH QTH QTH of QSO partner
+RST_RCVD R-RST received RST
+RST_SENT S-RST sent RST
+RX_PWR  RX-PWR   Power of other station in Watts
+SAT_MODE  SAT-Mode   Satellite Mode
+SAT_NAME  SAT-Name   Name of satellite
+SRX  RX-Num   Received serial number for a contest QSO
+STATE US-State US state
+STX  TX-Num Transmitted serial number for a contest QSO
+TEN_TEN   [TEN_TEN]
+TIME_OFF  Time-end Endtime of the QSO in  HHMM or HHMMSS in UTC
+TIME_ON   Time  (Start)Time of the QSO in HHMM or HHMMSS in UTC
+TX_PWR  PWR Power of this station in watts
+VE_PROV VE   2-letter abbreviations for the VE-Prov. : AB, BC, MB, NB, NF, NS, NT, ON, PE, QC, SK,
+
+
