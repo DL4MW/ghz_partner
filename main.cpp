@@ -59,9 +59,9 @@ struct QSO{
 struct Partner{
     QString call,locator;
     QStringList wkd;
-    bool canCW,has23,has13,has9;
+    bool canCW,has23,has13,has9,has2m,has70cm;
     double distance,azimut;
-    Partner(){canCW=false;has23=false;has13=false;has9=false;distance=0;azimut=0;}
+    Partner(){canCW=false;has23=false;has13=false;has9=false;distance=0;azimut=0;has2m=false;has70cm=false;}
 };
 
 bool operator<(const Partner p1, const Partner p2){if(p1.call<p2.call)return true;else return false;}
@@ -204,6 +204,12 @@ void ImportEdi(QString fileName)
                 band=band.toUpper();
             }
         }while(!sline.startsWith("[QSORecords",Qt::CaseInsensitive));
+
+        if(!(qth.toUpper()=="JO50KQ" || qth.toUpper()=="JO50LQ")){
+            printf("falscher Locator %s\n",qth.toLocal8Bit().constData());
+            return;
+        }
+
         if(feof(file)){
             printf("Vorzeitiges Ende, keine QSOs gefunden\n");
             return;
@@ -386,7 +392,7 @@ void AddPartner(QString call, QString band, QString locator, QString wkd, bool c
     wkd=wkd.toUpper();
 
 
-    if(! (band.contains("1,3GHZ") || band.contains("2,3GHZ") || band.contains("3,4GHZ")))return;
+    //if(! (band.contains("1,3GHZ") || band.contains("2,3GHZ") || band.contains("3,4GHZ")))return;
 
     for(it=partnerList.begin(); it!=partnerList.end(); ++it) {
         Partner p= *it;
@@ -395,6 +401,8 @@ void AddPartner(QString call, QString band, QString locator, QString wkd, bool c
             if(band=="1,3GHZ")p.has23=true;
             if(band=="2,3GHZ")p.has13=true;
             if(band=="3,4GHZ")p.has9=true;
+            if(band=="145MHZ")p.has2m=true;
+            if(band=="435MHZ")p.has70cm=true;
             if(cw)p.canCW=true;
 
             if(!p.wkd.contains(wkd))p.wkd.append(wkd);
@@ -409,6 +417,8 @@ void AddPartner(QString call, QString band, QString locator, QString wkd, bool c
             if(band=="1,3GHZ")p.has23=true;
             if(band=="2,3GHZ")p.has13=true;
             if(band=="3,4GHZ")p.has9=true;
+            if(band=="145MHZ")p.has2m=true;
+            if(band=="435MHZ")p.has70cm=true;
             p.locator=locator;
             if(cw)p.canCW=true;
             if(!p.wkd.contains(wkd))p.wkd.append(wkd);
@@ -480,21 +490,23 @@ int main(int argc, char *argv[])
     QList<Partner>::iterator it1;
     for(it1=partnerList.begin(); it1!=partnerList.end(); ++it1) {
         Partner p=*it1;
-        if(csvFile)fprintf(csvFile,"%s;%s;%s;%.0f;%.0f;%s;%s\n",p.call.toLocal8Bit().constData(),
-                           p.canCW?"CW":"-",
-                           p.locator.toLocal8Bit().constData(),
-                           p.distance,
-                           p.azimut,
-                           p.has13?"x":"-",
-                           p.has9?"x":"-");
+        if(p.has23){
+            if(csvFile)fprintf(csvFile,"%s;%s;%s;%.0f;%.0f;%s;%s\n",p.call.toLocal8Bit().constData(),
+                               p.canCW?"CW":"-",
+                               p.locator.toLocal8Bit().constData(),
+                               p.distance,
+                               p.azimut,
+                               p.has13?"x":"-",
+                               p.has9?"x":"-");
 
-        if(mdFile)fprintf(mdFile,"| %s | %s | %s | %.0f | %.0f | %s | %s |\n",p.call.toLocal8Bit().constData(),
-                           p.canCW?"CW":"-",
-                           p.locator.toLocal8Bit().constData(),
-                           p.distance,
-                           p.azimut,
-                           p.has13?"x":"-",
-                           p.has9?"x":"-");
+            if(mdFile)fprintf(mdFile,"| %s | %s | %s | %.0f | %.0f | %s | %s |\n",p.call.toLocal8Bit().constData(),
+                              p.canCW?"CW":"-",
+                              p.locator.toLocal8Bit().constData(),
+                              p.distance,
+                              p.azimut,
+                              p.has13?"x":"-",
+                              p.has9?"x":"-");
+        }
     }
     if(csvFile)fclose(csvFile);
     if(mdFile)fclose(mdFile);
@@ -530,6 +542,63 @@ int main(int argc, char *argv[])
     if(csvFile)fclose(csvFile);
     if(mdFile)fclose(mdFile);
 
+
+    csvFile=fopen("partnerList_ext.csv","wt");
+    mdFile=fopen("partnerList_ext.md","wt");
+
+     if(csvFile)fprintf(csvFile,"Call;CW?;Locator;Entfernung;Winkel;13?;9?\n");
+     if(mdFile)fprintf(mdFile,"^ Call ^ CW?  ^  Loc ^ km^ Dir^ 13 ^9 ^\n");
+
+     // Entfernungen und Winkel berechnen
+     // Ausgabe als CSV für Excel und md für das Wiki
+     for(it1=partnerList.begin(); it1!=partnerList.end(); ++it1) {
+         Partner p=*it1;
+         if(!(p.has9||p.has13))continue;
+         if(csvFile)fprintf(csvFile,"%s;%s;%s;%.0f;%.0f;%s;%s\n",p.call.toLocal8Bit().constData(),
+                            p.canCW?"CW":"-",
+                            p.locator.toLocal8Bit().constData(),
+                            p.distance,
+                            p.azimut,
+                            p.has13?"x":"-",
+                            p.has9?"x":"-");
+
+         if(mdFile)fprintf(mdFile,"| %s | %s | %s | %.0f | %.0f | %s | %s |\n",p.call.toLocal8Bit().constData(),
+                            p.canCW?"CW":"-",
+                            p.locator.toLocal8Bit().constData(),
+                            p.distance,
+                            p.azimut,
+                            p.has13?"x":"-",
+                            p.has9?"x":"-");
+     }
+     if(csvFile)fclose(csvFile);
+     if(mdFile)fclose(mdFile);
+
+
+     csvFile=fopen("2m.csv","wt");
+     mdFile=fopen("2m.md","wt");
+
+      if(csvFile)fprintf(csvFile,"Call;CW?;Locator;Entfernung;Winkel?\n");
+      if(mdFile)fprintf(mdFile,"^ Call ^ CW?  ^  Loc ^ km^ Dir^\n");
+
+      // Entfernungen und Winkel berechnen
+      // Ausgabe als CSV für Excel und md für das Wiki
+      for(it1=partnerList.begin(); it1!=partnerList.end(); ++it1) {
+          Partner p=*it1;
+          if(!(p.has2m))continue;
+          if(csvFile)fprintf(csvFile,"%s;%s;%s;%.0f;%.0f\n",p.call.toLocal8Bit().constData(),
+                             p.canCW?"CW":"-",
+                             p.locator.toLocal8Bit().constData(),
+                             p.distance,
+                             p.azimut);
+
+          if(mdFile)fprintf(mdFile,"| %s | %s | %s | %.0f | %.0f \n",p.call.toLocal8Bit().constData(),
+                             p.canCW?"CW":"-",
+                             p.locator.toLocal8Bit().constData(),
+                             p.distance,
+                             p.azimut);
+      }
+      if(csvFile)fclose(csvFile);
+      if(mdFile)fclose(mdFile);
 
 
     if(dbgFile)fclose(dbgFile);
